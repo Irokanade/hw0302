@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E6974DDA2629FB5A00DA038C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E6974DD92629FB5A00DA038C /* main.c */; };
+		E6929A7D262A8C24004257DE /* footballQuery.c in Sources */ = {isa = PBXBuildFile; fileRef = E6929A7C262A8C24004257DE /* footballQuery.c */; };
+		E6929A80262A8E4F004257DE /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = E6929A7F262A8E4F004257DE /* Makefile */; };
+		E6974DE32629FB6F00DA038C /* hw0302.c in Sources */ = {isa = PBXBuildFile; fileRef = E6974DE22629FB6F00DA038C /* hw0302.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +25,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E6929A7B262A8C24004257DE /* footballQuery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = footballQuery.h; sourceTree = "<group>"; };
+		E6929A7C262A8C24004257DE /* footballQuery.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = footballQuery.c; sourceTree = "<group>"; };
+		E6929A7F262A8E4F004257DE /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		E6974DD62629FB5A00DA038C /* hw0302 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hw0302; sourceTree = BUILT_PRODUCTS_DIR; };
-		E6974DD92629FB5A00DA038C /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		E6974DE22629FB6F00DA038C /* hw0302.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hw0302.c; sourceTree = "<group>"; };
+		E6B197862631921A00E3F5EA /* season-1617_csv.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "season-1617_csv.csv"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +63,11 @@
 		E6974DD82629FB5A00DA038C /* hw0302 */ = {
 			isa = PBXGroup;
 			children = (
-				E6974DD92629FB5A00DA038C /* main.c */,
+				E6B197862631921A00E3F5EA /* season-1617_csv.csv */,
+				E6974DE22629FB6F00DA038C /* hw0302.c */,
+				E6929A7B262A8C24004257DE /* footballQuery.h */,
+				E6929A7C262A8C24004257DE /* footballQuery.c */,
+				E6929A7F262A8E4F004257DE /* Makefile */,
 			);
 			path = hw0302;
 			sourceTree = "<group>";
@@ -118,7 +128,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6974DDA2629FB5A00DA038C /* main.c in Sources */,
+				E6929A80262A8E4F004257DE /* Makefile in Sources */,
+				E6974DE32629FB6F00DA038C /* hw0302.c in Sources */,
+				E6929A7D262A8C24004257DE /* footballQuery.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
