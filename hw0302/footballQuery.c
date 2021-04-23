@@ -32,7 +32,7 @@ int footballQuery() {
         return -1;
     }
     
-    printf("ext: %s\n", extension);
+    //printf("ext: %s\n", extension);
     
     //open the file
     if((pFile = fopen(fileName, "r")) == NULL) {
@@ -99,16 +99,16 @@ int footballQuery() {
         gameIndex++;
     }
     
+    printf("1) Who is the winner in this season?\n");
+    printf("2) Which team gets the most scores?\n");
+    printf("3) Which team gets the most red cards?\n");
+    printf("4) Which team wins the most games at home?\n");
+    printf("5) Which team wins the most games away from home?\n");
+    printf("6) Which game has the most scoring gap?\n");
+    printf("7) Team information.\n");
+    printf("8) Exit\n");
+    
     while(choice != 8) {
-        printf("1) Who is the winner in this season?\n");
-        printf("2) Which team gets the most scores?\n");
-        printf("3) Which team gets the most red cards?\n");
-        printf("4) Which team wins the most games at home?\n");
-        printf("5) Which team wins the most games away from home?\n");
-        printf("6) Which game has the most scoring gap?\n");
-        printf("7) Team information.\n");
-        printf("8) Exit\n");
-        
         printf("Choice (1-7, 8:exit): ");
         scanf("%d", &choice);
         
@@ -128,7 +128,7 @@ int footballQuery() {
                     }
                 }
                 
-                printf("Most points: %d\n", mostPoints);
+                //printf("Most points: %d\n", mostPoints);
                 printf("The winner is");
                 //search all team names with the same most points
                 for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
@@ -168,7 +168,7 @@ int footballQuery() {
                 
                 //search all team names with the same most red cards
                 for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
-                    if(teamStatsList[i].scores == mostRedCards) {
+                    if(teamStatsList[i].redCards == mostRedCards) {
                         printf(" %s,", teamStatsList[i].name);
                     }
                 }
@@ -180,7 +180,7 @@ int footballQuery() {
                 //find the most home wins
                 for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
                     if(teamStatsList[i].homeWins > mostHomeWins) {
-                        mostRedCards = teamStatsList[i].homeWins;
+                        mostHomeWins = teamStatsList[i].homeWins;
                     }
                 }
                 
@@ -198,7 +198,7 @@ int footballQuery() {
                 //find the most away wins
                 for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
                     if(teamStatsList[i].awayWins > mostAwayWins) {
-                        mostRedCards = teamStatsList[i].homeWins;
+                        mostAwayWins = teamStatsList[i].awayWins;
                     }
                 }
                 
@@ -228,33 +228,43 @@ int footballQuery() {
                 //search all games for the same largest score gap and print it out
                 for(size_t i = 0; i < sizeof(gameInfoList)/sizeof(gameInfoList[0]); i++) {
                     int diff = gameInfoList[i].homeScoreFT - gameInfoList[i].awayScoreFT;
+                    if(diff < 0) {
+                        //only want the diff so modulus diff
+                        diff *= -1;
+                    }
                     if(diff == largestScoreGap) {
                         printf("%s,%s(%d) vs %s(%d)\n", gameInfoList[i].date, gameInfoList[i].homeTeam, gameInfoList[i].homeScoreFT, gameInfoList[i].awayTeam, gameInfoList[i].awayScoreFT);
                     }
                 }
                 
+                //printf("Largest score gap: %d\n", largestScoreGap);
                 break;
                 
             case 7:
+                fflush(stdin);
                 //team information
                 printf("Team: ");
                 fgets(searchTeam, 129, stdin);
                 //remove the '\n' character
-                if(fileName[strlen(fileName) - 1] == '\n') {
-                    fileName[strlen(fileName) - 1] = 0;
+                if(searchTeam[strlen(searchTeam) - 1] == '\n') {
+                    searchTeam[strlen(searchTeam) - 1] = 0;
                 } else {
                     //clear the buffer
                     int c;
                     while ((c = getchar()) != '\n' && c != EOF) { }
                 }
                 
+                printf("search team: %s\n", searchTeam);
                 //search for team information via name
                 for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
-                    if(teamStatsList[i].name == searchTeam) {
+                    if(strcmp(searchTeam, teamStatsList[i].name) == 0) {
                         printf("Points: %d\n", teamStatsList[i].points);
                         printf("Win/Draw/Lose: %d/%d/%d\n", teamStatsList[i].homeWins+teamStatsList[i].awayWins, teamStatsList[i].homeDraws+teamStatsList[i].awayDraws, teamStatsList[i].homeLoses+teamStatsList[i].awayLoses);
+                        printf("Goals Scored/Goals Against: %d/%d\n", teamStatsList[i].scores, teamStatsList[i].scoresAgainst);
                     }
                 }
+                
+                break;
                 
             case 8:
                 break;
