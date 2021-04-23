@@ -23,6 +23,8 @@ typedef struct _gameInfo {
     char winner[129]; //if draw is false then assign winner
     char loser[129]; //if draw is flase then assign loser
     char referee[129]; //referee
+    int homeRedCard;
+    int awayRedCard;
 } gameInfo;
     
 typedef struct _teamStats {
@@ -35,8 +37,9 @@ typedef struct _teamStats {
     int homeDraws;
     int totalScores;
     int points;
-    int goalScores; //total scores they scored
-    int goalAgainst; //total score they took from opponent
+    int scores; //total scores they scored
+    int scoresAgainst; //total score they took from opponent
+    int redCards;
 } teamStats;
 
 
@@ -45,5 +48,7 @@ int searchNameTeamList(char *name, teamStats teamStatsList[], size_t teamListSiz
 int readUntilChar(FILE *pFile, char *result, char stopChar);
 void initializeGameListInfo(gameInfo gameInfoList[], size_t size);
 void initializeTeamStatsList(teamStats teamStatsList[], size_t size);
+void setGameInfo(gameInfo *gameInfoPage);
+void updateTeamStat(teamStats *teamStatsPage, gameInfo *gameInfoPage, char *teamName);
 
 #endif /* footballQuery_h */

@@ -50,13 +50,13 @@ int footballQuery() {
     //initialize the list
     initializeTeamStatsList(teamStatsList, sizeof(teamStatsList)/sizeof(teamStatsList[0]));
     
-    int index = 0;
-    int teamListIndex = 0;
-    int gameIndex = 0;
+    int index = 0; //index to find team
+    int teamListIndex = 0; //index of new team stat
+    int gameIndex = 0; //index for all the games
     
     char heading[129] = {0};
     fgets(heading, 129, pFile);
-    printf("heading: %s\n", heading);
+    //printf("heading: %s\n", heading);
     
     while(!feof(pFile)) {
         readUntilChar(pFile, gameInfoList[gameIndex].date, ',');
@@ -65,20 +65,35 @@ int footballQuery() {
         fscanf(pFile, "%d,%d,%c,%d,%d,%c,", &gameInfoList[gameIndex].homeScoreFT, &gameInfoList[gameIndex].awayScoreFT, &gameInfoList[gameIndex].fullTimeResult, &gameInfoList[gameIndex].homeScoreHT, &gameInfoList[gameIndex].awayScoreHT, &gameInfoList[gameIndex].halfTimeResult);
         readUntilChar(pFile, gameInfoList[gameIndex].referee, ',');
         
-        //set the other data in game info
-        
-        //read until end of the line hehe
         //need to deal with red cards
         char useless[129] = {0};
-        fgets(useless, 129, pFile);
+        for(size_t i = 0; i < 10; i++) {
+            //skip 10 ',' data
+            //data is not needed for this homework
+            readUntilChar(pFile, useless, ',');
+        }
+        //finally read the red card data
+        fscanf(pFile, "%d,%d\n", &gameInfoList[gameIndex].homeRedCard, &gameInfoList[gameIndex].awayRedCard);
+        
+        //set the other data in game info
+        setGameInfo(&gameInfoList[gameIndex]);
+        
         
         //search for home team in list else create a new record
         index = searchNameTeamList(gameInfoList[gameIndex].homeTeam, teamStatsList, sizeof(teamStatsList)/sizeof(teamStatsList[0]));
         if(index == -1) {
             index = teamListIndex++;
         }
-        strncpy(teamStatsList[index].name, gameInfoList[gameIndex].homeTeam, strlen(gameInfoList[gameIndex].homeTeam));
+        //update the data for home team
+        updateTeamStat(&teamStatsList[index], &gameInfoList[gameIndex], gameInfoList[gameIndex].homeTeam);
         
+        //search for away team in list else create a new record
+        index = searchNameTeamList(gameInfoList[gameIndex].awayTeam, teamStatsList, sizeof(teamStatsList)/sizeof(teamStatsList[0]));
+        if(index == -1) {
+            index = teamListIndex++;
+        }
+        //update the data for away team
+        updateTeamStat(&teamStatsList[index], &gameInfoList[gameIndex], gameInfoList[gameIndex].awayTeam);
         
         
         gameIndex++;
@@ -97,20 +112,155 @@ int footballQuery() {
         printf("Choice (1-7, 8:exit): ");
         scanf("%d", &choice);
         
+        int mostPoints = 0;
+        int mostScores = 0;
+        int mostRedCards = 0;
+        int mostHomeWins = 0;
+        int mostAwayWins = 0;
+        int largestScoreGap = 0;
+        char searchTeam[129] = {0};
         switch(choice) {
             case 1:
                 //winner of the season
-                for(size_t i = 0; i < sizeof(gameInfoList)/sizeof(gameInfoList[0]); i++) {
-                    //do smtg
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].points > mostPoints) {
+                        mostPoints = teamStatsList[i].points;
+                    }
                 }
+                
+                printf("Most points: %d\n", mostPoints);
+                printf("The winner is");
+                //search all team names with the same most points
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].points == mostPoints) {
+                        printf(" %s,", teamStatsList[i].name);
+                    }
+                }
+                
+                printf("\n");
                 break;
                 
             case 2:
+                //find the most scores
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].scores > mostScores) {
+                        mostScores = teamStatsList[i].scores;
+                    }
+                }
                 
+                //search all team names with the same most scores
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].scores == mostScores) {
+                        printf(" %s,", teamStatsList[i].name);
+                    }
+                }
+                
+                printf(" %d\n", mostScores);
+                break;
+                
+            case 3:
+                //find the most red cards
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].redCards > mostRedCards) {
+                        mostRedCards = teamStatsList[i].redCards;
+                    }
+                }
+                
+                //search all team names with the same most red cards
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].scores == mostRedCards) {
+                        printf(" %s,", teamStatsList[i].name);
+                    }
+                }
+                
+                printf(" %d\n", mostRedCards);
+                break;
+                
+            case 4:
+                //find the most home wins
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].homeWins > mostHomeWins) {
+                        mostRedCards = teamStatsList[i].homeWins;
+                    }
+                }
+                
+                //search all team names with the same home wins
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].homeWins == mostHomeWins) {
+                        printf(" %s,", teamStatsList[i].name);
+                    }
+                }
+                
+                printf(" %d\n", mostHomeWins);
+                break;
+                
+            case 5:
+                //find the most away wins
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].awayWins > mostAwayWins) {
+                        mostRedCards = teamStatsList[i].homeWins;
+                    }
+                }
+                
+                //search all team names with the same home wins
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].awayWins == mostAwayWins) {
+                        printf(" %s,", teamStatsList[i].name);
+                    }
+                }
+                
+                printf(" %d\n", mostAwayWins);
+                break;
+                
+            case 6:
+                //find the largest score gap
+                for(size_t i = 0; i < sizeof(gameInfoList)/sizeof(gameInfoList[0]); i++) {
+                    int diff = gameInfoList[i].homeScoreFT - gameInfoList[i].awayScoreFT;
+                    if(diff < 0) {
+                        //only want the diff so modulus diff
+                        diff *= -1;
+                    }
+                    if(diff > largestScoreGap) {
+                        largestScoreGap = diff;
+                    }
+                }
+                
+                //search all games for the same largest score gap and print it out
+                for(size_t i = 0; i < sizeof(gameInfoList)/sizeof(gameInfoList[0]); i++) {
+                    int diff = gameInfoList[i].homeScoreFT - gameInfoList[i].awayScoreFT;
+                    if(diff == largestScoreGap) {
+                        printf("%s,%s(%d) vs %s(%d)\n", gameInfoList[i].date, gameInfoList[i].homeTeam, gameInfoList[i].homeScoreFT, gameInfoList[i].awayTeam, gameInfoList[i].awayScoreFT);
+                    }
+                }
                 
                 break;
                 
+            case 7:
+                //team information
+                printf("Team: ");
+                fgets(searchTeam, 129, stdin);
+                //remove the '\n' character
+                if(fileName[strlen(fileName) - 1] == '\n') {
+                    fileName[strlen(fileName) - 1] = 0;
+                } else {
+                    //clear the buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF) { }
+                }
+                
+                //search for team information via name
+                for(size_t i = 0; i < sizeof(teamStatsList)/sizeof(teamStatsList[0]); i++) {
+                    if(teamStatsList[i].name == searchTeam) {
+                        printf("Points: %d\n", teamStatsList[i].points);
+                        printf("Win/Draw/Lose: %d/%d/%d\n", teamStatsList[i].homeWins+teamStatsList[i].awayWins, teamStatsList[i].homeDraws+teamStatsList[i].awayDraws, teamStatsList[i].homeLoses+teamStatsList[i].awayLoses);
+                    }
+                }
+                
+            case 8:
+                break;
+                
             default:
+                printf("Invalid option >:[\n");
                 break;
         }
     }
@@ -134,7 +284,8 @@ int searchNameTeamList(char *name, teamStats teamStatsList[], size_t teamListSiz
 int readUntilChar(FILE *pFile, char *result, char stopChar) {
     while(!feof(pFile)) {
         char temp = fgetc(pFile);
-        if(temp != stopChar && temp != 0) {
+        //stop when reach the stop char or end of string or new line
+        if(temp != stopChar && temp != 0 && temp != '\n') {
             strncat(result, &temp, 1);
         } else {
             return 1;
@@ -172,7 +323,73 @@ void initializeTeamStatsList(teamStats teamStatsList[], size_t size) {
         teamStatsList[i].homeDraws = 0;
         teamStatsList[i].totalScores = 0;
         teamStatsList[i].points = 0;
-        teamStatsList[i].goalScores = 0;
-        teamStatsList[i].goalAgainst = 0;
+        teamStatsList[i].scores = 0;
+        teamStatsList[i].scoresAgainst = 0;
     }
+}
+
+void setGameInfo(gameInfo *gameInfoPage) {
+    //set the winner
+    if(gameInfoPage->fullTimeResult == 'H') {
+        strncpy(gameInfoPage->winner, gameInfoPage->homeTeam, strlen(gameInfoPage->homeTeam));
+        strncpy(gameInfoPage->loser, gameInfoPage->awayTeam, strlen(gameInfoPage->homeTeam));
+    } else if(gameInfoPage->fullTimeResult == 'A') {
+        strncpy(gameInfoPage->winner, gameInfoPage->awayTeam, strlen(gameInfoPage->homeTeam));
+        strncpy(gameInfoPage->loser, gameInfoPage->homeTeam, strlen(gameInfoPage->homeTeam));
+    }
+    //else it is draw so don't set any winners
+}
+
+void updateTeamStat(teamStats *teamStatsPage, gameInfo *gameInfoPage, char *teamName) {
+    //check if home of away
+    if(strcmp(gameInfoPage->homeTeam, teamName) == 0) {
+        //team is home
+        //update name as might be a new record
+        strncpy(teamStatsPage->name, gameInfoPage->homeTeam, strlen(gameInfoPage->homeTeam));
+        //update home wins of losses or draws and update points
+        if(gameInfoPage->fullTimeResult == 'H') {
+            teamStatsPage->homeWins += 1;
+            //update points
+            teamStatsPage->points += 3;
+        } else if(gameInfoPage->fullTimeResult == 'A') {
+            teamStatsPage->homeLoses += 1;
+        } else {
+            teamStatsPage->homeDraws += 1;
+            //update points
+            teamStatsPage->points += 1;
+        }
+        
+        //set the scores
+        teamStatsPage->scores += gameInfoPage->homeScoreFT;
+        teamStatsPage->scoresAgainst += gameInfoPage->awayScoreFT;
+        
+        //set red cards
+        teamStatsPage->redCards += gameInfoPage->homeRedCard;
+        
+    } else {
+        //else it is away
+        //update name as might be a new record
+        strncpy(teamStatsPage->name, gameInfoPage->awayTeam, strlen(gameInfoPage->awayTeam));
+        //update away wins or losses or draws and set points
+        if(gameInfoPage->fullTimeResult == 'A') {
+            teamStatsPage->awayWins += 1;
+            //update points
+            teamStatsPage->points += 3;
+        } else if(gameInfoPage->fullTimeResult == 'H') {
+            teamStatsPage->awayLoses += 1;
+        } else {
+            teamStatsPage->awayDraws += 1;
+            //update points
+            teamStatsPage->points += 1;
+        }
+        
+        //set the scores
+        teamStatsPage->scores += gameInfoPage->awayScoreFT;
+        teamStatsPage->scoresAgainst += gameInfoPage->homeScoreFT;
+        
+        //set red cards
+        teamStatsPage->redCards += gameInfoPage->awayRedCard;
+    }
+    
+    
 }
